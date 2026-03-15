@@ -1,0 +1,980 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',system-ui,sans-serif;background:var(--color-background-tertiary);color:var(--color-text-primary);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+:root{
+  --blue:#2563eb;--blue-s:#EFF4FF;--blue-t:#1d4ed8;
+  --pink:#db2777;--green:#059669;--amber:#d97706;
+  --red:#dc2626;--purple:#7c3aed;--teal:#0891b2;
+  --r4:4px;--r8:8px;--r12:12px;--r16:16px;--rfull:9999px;
+}
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slr{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+.page{animation:fup .25s ease}
+.slide-in{animation:slr .22s ease}
+.fade{animation:fin .18s ease}
+
+.shell{display:flex;height:720px;background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);overflow:hidden}
+.sidebar{width:210px;min-width:210px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;overflow:hidden}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;background:var(--color-background-tertiary)}
+.topbar{height:52px;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0}
+.scroll{flex:1;overflow-y:auto;padding:20px 18px}
+.scroll::-webkit-scrollbar{width:3px}.scroll::-webkit-scrollbar-thumb{background:var(--color-border-tertiary);border-radius:10px}
+
+.sb-logo{padding:14px 14px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sb-mark{width:30px;height:30px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sb-tag{font-size:10px;color:var(--color-text-tertiary)}
+
+.sb-section{padding:10px 10px 2px}
+.sb-lbl{font-size:10px;color:var(--color-text-tertiary);font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:0 6px;margin-bottom:3px}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--r8);font-size:12px;font-weight:400;color:var(--color-text-secondary);margin-bottom:1px;cursor:pointer;transition:background .1s;border-left:2px solid transparent}
+.ni:hover{background:var(--color-background-secondary)}
+.ni.on{background:#EFF4FF;color:var(--blue);font-weight:500;border-left-color:var(--blue)}
+.ni-dot{width:6px;height:6px;border-radius:50%;background:#ef4444;margin-left:auto;flex-shrink:0}
+.sb-cta{margin:8px 10px 4px;padding:10px 10px;background:#EFF4FF;border-radius:var(--r8);cursor:pointer;border:0.5px solid #B5D4F4}
+.sb-cta-t{font-size:11px;font-weight:500;color:var(--blue)}
+.sb-cta-s{font-size:10px;color:#378ADD;margin-top:1px}
+.sb-divider{height:0.5px;background:var(--color-border-tertiary);margin:6px 10px}
+.sb-user{padding:10px 12px;border-top:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:auto}
+.sb-user:hover{background:var(--color-background-secondary)}
+
+.av{border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:500;flex-shrink:0;font-size:11px}
+.tb-title{font-size:14px;font-weight:500;flex:1}
+.tb-btn{padding:5px 12px;border-radius:var(--r8);background:var(--blue);color:#fff;font-size:11px;font-weight:500;cursor:pointer;border:none;display:flex;align-items:center;gap:5px}
+.tb-iBtn{width:30px;height:30px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);position:relative}
+.tb-iBtn:hover{background:var(--color-background-secondary)}
+.nb-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:#ef4444;border:1.5px solid var(--color-background-primary)}
+
+.ph{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;gap:10px}
+.ph h1{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.ph p{font-size:12px;color:var(--color-text-tertiary);margin-top:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--r12);padding:14px}
+.card-sm{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--r8);padding:12px}
+.mc{background:var(--color-background-secondary);border-radius:var(--r8);padding:12px;border-top:2px solid transparent}
+.mc-lbl{font-size:10px;color:var(--color-text-tertiary);font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.mc-val{font-size:22px;font-weight:500;margin:4px 0 2px;line-height:1}
+.mc-sub{font-size:10px;color:var(--color-text-tertiary)}
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--rfull);font-size:10px;font-weight:500}
+.bdg::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0}
+.b-confirmed{background:#EAF3DE;color:#27500A}
+.b-pending{background:#FAEEDA;color:#633806}
+.b-cancelled{background:#FCEBEB;color:#791F1F}
+.b-completed{background:#E6F1FB;color:#0C447C}
+.b-no_show{background:#F1EFE8;color:#444441}
+.ir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.ir-l{color:var(--color-text-secondary)}
+.ir-v{font-weight:500}
+.btn-p{padding:6px 14px;border-radius:var(--r8);background:var(--blue);color:#fff;font-size:12px;font-weight:500;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:5px}
+.btn-s{padding:6px 12px;border-radius:var(--r8);background:var(--color-background-secondary);color:var(--color-text-secondary);font-size:12px;font-weight:400;cursor:pointer;border:0.5px solid var(--color-border-secondary);display:inline-flex;align-items:center;gap:5px}
+.btn-d{padding:6px 12px;border-radius:var(--r8);background:#FCEBEB;color:#A32D2D;font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid #F7C1C1;display:inline-flex;align-items:center;gap:5px}
+.tag{font-size:10px;padding:3px 8px;border-radius:var(--rfull)}
+.svc-cover{height:80px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:10px;position:relative}
+.svc-cat{position:absolute;top:6px;left:6px;background:rgba(255,255,255,.9);border-radius:var(--rfull);padding:2px 7px;font-size:9px;font-weight:500;color:#333}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--rfull);font-size:11px;font-weight:400;cursor:pointer;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-secondary)}
+.chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.chip:hover:not(.on){background:var(--color-background-secondary)}
+.ni-item{display:flex;gap:10px;padding:10px 12px;cursor:pointer;border-bottom:0.5px solid var(--color-border-tertiary);border-left:2px solid transparent}
+.ni-item.unrd{background:#EFF4FF;border-left-color:var(--blue)}
+.ni-item:hover{background:var(--color-background-secondary)}
+.ni-ic{width:32px;height:32px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.prog-t{height:5px;background:var(--color-background-tertiary);border-radius:3px;overflow:hidden}
+.prog-f{height:100%;border-radius:3px;transition:width .4s}
+.bk-row{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bk-row:last-child{border-bottom:none}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cdh{text-align:center;font-size:9px;color:var(--color-text-tertiary);font-weight:500;text-transform:uppercase;padding:3px 0 6px}
+.cc{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:3px 1px;border-radius:6px;cursor:pointer;font-size:11px;color:var(--color-text-primary);gap:2px}
+.cc:hover{background:var(--color-background-secondary)}
+.cc.om{color:var(--color-text-tertiary)}
+.cc.tod{background:var(--blue);color:#fff;font-weight:500}
+.cc.sel:not(.tod){border:1.5px solid var(--blue);font-weight:500}
+.cdots{display:flex;gap:1.5px;justify-content:center}
+.cdot{width:3px;height:3px;border-radius:50%}
+.auth-wrap{display:flex;height:720px;background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);overflow:hidden}
+.auth-brand{flex:0 0 40%;background:var(--blue);display:flex;flex-direction:column;justify-content:center;padding:36px;position:relative;overflow:hidden}
+.auth-brand::after{content:'';position:absolute;bottom:-40px;right:-40px;width:200px;height:200px;border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+.auth-form{flex:1;display:flex;align-items:center;justify-content:center;padding:36px 28px}
+.inp{width:100%;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--r8);padding:8px 11px;font-size:12px;color:var(--color-text-primary);outline:none;font-family:inherit}
+.inp:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(37,99,235,.12)}
+.sel{width:100%;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--r8);padding:8px 11px;font-size:12px;color:var(--color-text-primary);outline:none;font-family:inherit;-webkit-appearance:none}
+.ta{width:100%;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--r8);padding:8px 11px;font-size:12px;color:var(--color-text-primary);outline:none;font-family:inherit;resize:vertical;min-height:60px;line-height:1.5}
+.fl{display:block;font-size:11px;color:var(--color-text-secondary);font-weight:500;margin-bottom:4px}
+.ff{margin-bottom:12px}
+.over-tint{background:rgba(0,0,0,.35);display:flex;align-items:flex-start;justify-content:center;padding:20px}
+.modal-box{background:var(--color-background-primary);border-radius:var(--r16);border:0.5px solid var(--color-border-tertiary);width:100%;max-width:420px;overflow:hidden}
+.drawer-box{background:var(--color-background-primary);border-radius:var(--r16) 0 0 var(--r16);width:300px;min-height:600px;border:0.5px solid var(--color-border-tertiary);margin-left:auto}
+.sh{scrollbar-width:none}.sh::-webkit-scrollbar{display:none}
+table{width:100%;border-collapse:collapse}
+th{padding:8px 12px;text-align:left;font-size:10px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.05em;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+td{padding:9px 12px;font-size:12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+tr:hover td{background:var(--color-background-secondary)}
+.ofr{background:var(--color-background-secondary);border-radius:var(--r8);padding:12px;border-left:2px solid var(--blue)}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;text-align:center}
+.empty-ic{width:44px;height:44px;border-radius:var(--r12);background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px}
+</style>
+
+<div id="root"></div>
+
+<script>
+const D=document,R=D.getElementById('root');
+const TSTR=()=>{const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`};
+const NOW=new Date(),YY=NOW.getFullYear(),MM=String(NOW.getMonth()+1).padStart(2,'0');
+const D_=n=>`${YY}-${MM}-${String(n).padStart(2,'0')}`;
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const APAL=['#2563eb','#7c3aed','#059669','#d97706','#dc2626','#0891b2','#65a30d','#db2777'];
+const aC=h=>{let x=0;for(let i=0;i<h.length;i++){x=h.charCodeAt(i)+((x<<5)-x)}return APAL[Math.abs(x)%APAL.length]};
+const ini=n=>n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const fD=s=>{if(!s)return'';const d=new Date(s+'T00:00:00');return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})};
+const fT=t=>{if(!t)return'';const[h,m]=t.split(':').map(Number);return`${h%12||12}:${String(m).padStart(2,'0')} ${h<12?'AM':'PM'}`};
+const rT=iso=>{const s=Math.floor((Date.now()-new Date(iso))/1000);if(s<60)return'just now';if(s<3600)return`${Math.floor(s/60)}m ago`;if(s<86400)return`${Math.floor(s/3600)}h ago`;return'Yesterday'};
+const INR=n=>'₹'+Number(n).toLocaleString('en-IN');
+const sC=s=>({confirmed:'#059669',pending:'#d97706',cancelled:'#dc2626',completed:'#0891b2',no_show:'#888'}[s]||'#2563eb');
+const BDGL={confirmed:'Confirmed',pending:'Pending',cancelled:'Cancelled',completed:'Completed',no_show:'No Show',requested:'Requested'};
+const BCLP={confirmed:'b-confirmed',pending:'b-pending',cancelled:'b-cancelled',completed:'b-completed',no_show:'b-no_show',requested:'b-completed'};
+
+const USERS=[
+  {id:1,handle:'priya_sharma',display_name:'Priya Sharma',email:'priya@example.com',phone:'9876543210'},
+  {id:2,handle:'rahul_mehta_92',display_name:'Rahul Mehta',email:'rahul@example.com',phone:'9123456789'},
+  {id:3,handle:'ananya_patel',display_name:'Ananya Patel',email:'ananya@example.com',phone:'9988776655'},
+  {id:4,handle:'vikram_nair',display_name:'Vikram Nair',email:'vikram@example.com',phone:'9012345678'},
+  {id:5,handle:'sneha_k',display_name:'Sneha Kulkarni',email:'sneha@example.com',phone:'9345678901'},
+  {id:6,handle:'arjun_singh',display_name:'Arjun Singh',email:'arjun@example.com',phone:'9567890123'},
+];
+const CATS=[
+  {id:1,name:'Photography',icon:'📷',color:'#7c3aed'},
+  {id:2,name:'Salon & Grooming',icon:'✂️',color:'#db2777'},
+  {id:3,name:'Spa & Wellness',icon:'🌿',color:'#059669'},
+  {id:4,name:'Fitness',icon:'🏋️',color:'#d97706'},
+  {id:5,name:'Education',icon:'📚',color:'#2563eb'},
+];
+const SVCS_R=[
+  {id:1,owner_user_id:1,category_id:1,name:'Priya Captures',description:'Professional photography for portraits, events & weddings.',location:'Mumbai, Bandra',base_price:5000,duration_minutes:120,color:'#7c3aed'},
+  {id:2,owner_user_id:2,category_id:2,name:"Rahul's Salon",description:'Premium haircuts, styling & beard grooming for everyone.',location:'Pune, Koregaon Park',base_price:800,duration_minutes:60,color:'#db2777'},
+  {id:3,owner_user_id:6,category_id:3,name:'Divya Wellness',description:'Holistic spa, massage & relaxation therapy.',location:'Nagpur, Sitabuldi',base_price:2200,duration_minutes:90,color:'#059669'},
+  {id:4,owner_user_id:5,category_id:4,name:'FitZone',description:'Personal training and nutrition coaching.',location:'Pune, Wakad',base_price:1500,duration_minutes:60,color:'#d97706'},
+  {id:5,owner_user_id:4,category_id:5,name:'Karan Tutors',description:'Expert coaching in Maths, Physics & Coding.',location:'Online / Nagpur',base_price:600,duration_minutes:60,color:'#2563eb'},
+];
+const SVCS=SVCS_R.map(s=>({...s,owner:USERS.find(u=>u.id===s.owner_user_id),category:CATS.find(c=>c.id===s.category_id)}));
+const LINKS=[
+  {id:1,user_id:2,service_id:1,service:SVCS[0]},
+  {id:2,user_id:2,service_id:3,service:SVCS[2]},
+  {id:3,user_id:2,service_id:4,service:SVCS[3]},
+];
+const mkBk=(id,sid,cuid,cn,ch,staff,day,st,et,status,amt,notes)=>({
+  id,service_id:sid,customer_user_id:cuid,customer_name:cn,customer_handle:ch,
+  staff_name:staff,booking_date:day,start_time:st,end_time:et,status,amount:amt,notes,
+  service:SVCS.find(s=>s.id===sid),customer_user:cuid?USERS.find(u=>u.id===cuid):null
+});
+const INIT_BK=[
+  mkBk(1,2,3,'Ananya Patel','ananya_patel','Rahul Mehta',D_(3),'09:00','10:00','confirmed',800,'Regular haircut'),
+  mkBk(2,2,4,'Vikram Nair','vikram_nair','Karan Mehta',D_(5),'10:00','10:45','completed',500,''),
+  mkBk(3,2,5,'Sneha Kulkarni','sneha_k','Rahul Mehta',D_(8),'11:00','12:00','pending',800,'Colour consult'),
+  mkBk(4,2,3,'Ananya Patel','ananya_patel','Karan Mehta',D_(10),'14:00','15:00','confirmed',800,'Styling'),
+  mkBk(5,2,4,'Vikram Nair','vikram_nair','Rahul Mehta',D_(12),'09:30','10:30','cancelled',800,''),
+  mkBk(6,2,5,'Sneha Kulkarni','sneha_k','Karan Mehta',D_(14),'10:00','11:00','confirmed',1200,'Colour treatment'),
+  mkBk(7,2,3,'Ananya Patel','ananya_patel','Rahul Mehta',TSTR(),'09:00','10:00','confirmed',800,'Regular'),
+  mkBk(8,2,5,'Sneha Kulkarni','sneha_k','Karan Mehta',TSTR(),'11:00','12:00','pending',1200,'Colour'),
+  mkBk(9,2,4,'Vikram Nair','vikram_nair','Rahul Mehta',TSTR(),'14:00','14:45','confirmed',500,''),
+  mkBk(10,1,2,'Rahul Mehta','rahul_mehta_92','Priya Sharma',D_(7),'09:00','11:00','confirmed',5000,'Product shoot'),
+  mkBk(11,3,2,'Rahul Mehta','rahul_mehta_92','Staff','Divya',D_(11),'15:00','16:30','completed',2200,'Massage'),
+  mkBk(12,3,2,'Rahul Mehta','rahul_mehta_92','Divya',TSTR(),'18:00','19:30','confirmed',2200,'Evening'),
+];
+const INIT_N=[
+  {id:1,type:'booking_created',title:"New booking at Rahul's Salon",body:'Ananya Patel confirmed for today at 9:00 AM.',is_read:false,created_at:new Date(Date.now()-3600000).toISOString()},
+  {id:2,type:'status_changed',title:'Booking updated — Divya Wellness',body:'Your spa booking is now completed.',is_read:false,created_at:new Date(Date.now()-7200000).toISOString()},
+  {id:3,type:'new_customer_linked',title:'New customer: @arjun_singh',body:"Arjun Singh added Rahul's Salon.",is_read:false,created_at:new Date(Date.now()-86400000).toISOString()},
+  {id:4,type:'offer_posted',title:'New offer from Divya Wellness',body:'First-time visitors get a free foot massage!',is_read:true,created_at:new Date(Date.now()-172800000).toISOString()},
+  {id:5,type:'offer_posted',title:"New offer from Rahul's Salon",body:'20% off all services this weekend!',is_read:true,created_at:new Date(Date.now()-259200000).toISOString()},
+];
+const INIT_OFF=[
+  {id:1,service_id:2,title:'Weekend Flash Sale',body:'Get 20% off all haircut & styling packages this weekend. Valid for linked customers only.',valid_until:D_(20),is_active:true,service:SVCS[1]},
+  {id:2,service_id:2,title:'Refer & Earn',body:'Refer a friend and both get ₹100 off your next visit. No limit!',valid_until:null,is_active:true,service:SVCS[1]},
+  {id:3,service_id:3,title:'New Member Welcome',body:'First-time visitors get a free 15-min foot massage with any full-body package.',valid_until:null,is_active:true,service:SVCS[2]},
+];
+const CU=USERS[1];
+
+let S={
+  auth:'login',page:'dashboard',pp:{},sb:false,
+  bookings:[...INIT_BK],notifs:[...INIT_N],offers:[...INIT_OFF],
+  linkedIds:LINKS.map(l=>l.service_id),
+  bkModal:false,editBk:null,drawerBk:null,drawerSvc:null,drawerCust:null,offerModal:false,
+  prefDate:null,calY:NOW.getFullYear(),calM:NOW.getMonth()+1,calSel:TSTR(),
+  explCat:0,bkSearch:'',bkFilter:'all',
+};
+let nextId=100;
+
+function set(partial){Object.assign(S,partial);render()}
+function nav(p,pp={}){set({page:p,pp,sb:false})}
+
+function addN(data){S.notifs=[{id:++nextId,recipient_user_id:CU.id,is_read:false,created_at:new Date().toISOString(),...data},...S.notifs]}
+
+function av(user,size=28){
+  if(!user)return '';
+  const c=aC(user.handle),i=ini(user.display_name),fs=Math.floor(size*.38);
+  return `<div class="av" style="width:${size}px;height:${size}px;background:${c}22;border:1.5px solid ${c}44;color:${c};font-size:${fs}px">${i}</div>`;
+}
+function avInfo(user,size=28){
+  if(!user)return '';
+  return `<div style="display:flex;align-items:center;gap:8px">${av(user,size)}<div><div style="font-size:12px;font-weight:500">${user.display_name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">@${user.handle}</div></div></div>`;
+}
+function bdg(status){return`<span class="bdg ${BCLP[status]||'b-completed'}">${BDGL[status]||status}</span>`}
+function svcCover(svc,h=80){return`<div class="svc-cover" style="height:${h}px;background:linear-gradient(135deg,${svc.color}dd,${svc.color}88)"><span style="font-size:${h*.32}px;line-height:1">${svc.category?.icon||'★'}</span><div class="svc-cat">${svc.category?.name||''}</div></div>`}
+function ir(l,v){return`<div class="ir"><span class="ir-l">${l}</span><span class="ir-v">${v}</span></div>`}
+function sh(t,a=''){return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:13px;font-weight:500">${t}</div>${a}</div>`}
+function prog(val,max,color='#2563eb'){const p=max?Math.round((val/max)*100):0;return`<div class="prog-t"><div class="prog-f" style="width:${p}%;background:${color}"></div></div>`}
+
+function calCells(y,m){
+  const fd=new Date(y,m-1,1).getDay(),days=new Date(y,m,0).getDate(),pd=new Date(y,m-1,0).getDate();
+  const c=[];for(let i=0;i<fd;i++)c.push({d:pd-fd+1+i,cur:false});
+  for(let d=1;d<=days;d++)c.push({d,cur:true});
+  while(c.length<35)c.push({d:c.length-days-fd+1,cur:false});return c;
+}
+function dKey(y,m,d){return`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`}
+
+function renderSidebar(){
+  const p=S.page,unrd=S.notifs.filter(n=>!n.is_read).length;
+  const myS=SVCS.find(s=>s.owner_user_id===CU.id);
+  const ni=(id,ico,lbl,dot=false)=>`<div class="ni${p===id?' on':''}" onclick="nav('${id}')">${ico}<span style="flex:1">${lbl}</span>${dot&&unrd>0?'<div class="ni-dot"></div>':''}</div>`;
+  const calIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><rect x="1" y="1.5" width="11" height="10.5" rx="1.5"/><path d="M4 1v1.5M9 1v1.5M1 5.5h11"/></svg>';
+  const homeIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M1.5 5.5L6.5 1.5l5 4V12H9V8.5H4V12H1.5z"/></svg>';
+  const gridIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><rect x="1" y="1" width="4.5" height="4.5" rx="1"/><rect x="7.5" y="1" width="4.5" height="4.5" rx="1"/><rect x="1" y="7.5" width="4.5" height="4.5" rx="1"/><rect x="7.5" y="7.5" width="4.5" height="4.5" rx="1"/></svg>';
+  const cmpIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><circle cx="6.5" cy="6.5" r="5.5"/><path d="M8.5 4.5l-1.5 3.5-2-1.2 1.5-3.5z"/></svg>';
+  const bellIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M6.5 1.5A3.5 3.5 0 0 0 3 5v3.5L2 10h9l-1-1.5V5A3.5 3.5 0 0 0 6.5 1.5z"/><path d="M5.5 11a1 1 0 0 0 2 0"/></svg>';
+  const listIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M2 3.5h9M2 6.5h9M2 9.5h6"/></svg>';
+  const usersIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><circle cx="5" cy="4.5" r="2"/><path d="M1 11c0-2.2 1.8-3.5 4-3.5s4 1.3 4 3.5"/><circle cx="10.5" cy="4.5" r="1.5"/><path d="M12.5 11c0-1.4-.8-2.5-2-2.5"/></svg>';
+  const chrtIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M1.5 10l3-4 2.5 3 3.5-5" strokeLinecap="round" strokeLinejoin="round"/></svg>';
+  const tagIco='<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M7.5 1.5H2.5A1.5 1.5 0 0 0 1 3v5l6 5.5 6-5.5z"/><circle cx="4" cy="4.5" r="1" fill="currentColor" stroke="none"/></svg>';
+  return`<div class="sb-logo"><div style="display:flex;align-items:center;gap:9px"><div class="sb-mark">B</div><div><div class="sb-name">Booknest</div><div class="sb-tag">Service Platform</div></div></div></div>
+  <div class="sb-section"><div class="sb-lbl">My Account</div>
+    ${ni('dashboard',homeIco,'Dashboard')}${ni('my-services',gridIco,'My Services')}${ni('calendar',calIco,'Calendar')}${ni('explore',cmpIco,'Explore')}${ni('latest',bellIco,'Latest',true)}
+  </div>
+  <div class="sb-divider"></div>
+  <div class="sb-section"><div class="sb-lbl">My Service</div>
+    ${myS?`${ni('provider-dashboard',homeIco,'Dashboard')}${ni('manage-bookings',listIco,'Manage Bookings')}${ni('customers',usersIco,'Customers')}${ni('provider-calendar',calIco,'Calendar')}${ni('analytics',chrtIco,'Analytics')}${ni('offers',tagIco,'Offers & Posts')}`
+    :`<div class="sb-cta" onclick="nav('onboard-service')"><div class="sb-cta-t">+ Onboard your service</div><div class="sb-cta-s">Start accepting bookings</div></div>`}
+  </div>
+  <div class="sb-user" onclick="nav('profile')">${av(CU,26)}<div style="min-width:0;flex:1"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${CU.display_name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">@${CU.handle}</div></div></div>`;
+}
+
+function renderTopbar(){
+  const isP=['provider-dashboard','manage-bookings','customers','provider-calendar','analytics','offers'].includes(S.page);
+  const TITLES={dashboard:'Dashboard','my-services':'My Services','service-detail':'Service Detail',calendar:'My Calendar',explore:'Explore Services',latest:'Latest','provider-dashboard':'Provider Dashboard','manage-bookings':'Manage Bookings',customers:'Customers','provider-calendar':'Provider Calendar',analytics:'Analytics',offers:'Offers & Posts','onboard-service':'Onboard Service',profile:'My Profile'};
+  const unrd=S.notifs.filter(n=>!n.is_read).length;
+  return`<div class="tb-title">${TITLES[S.page]||'Booknest'}</div>
+  ${isP?`<button class="tb-btn" onclick="S.editBk=null;S.prefDate=null;S.bkModal=true;render()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5.5 1v9M1 5.5h9"/></svg> New Booking</button>`:''}
+  <div class="tb-iBtn" onclick="nav('latest')" style="margin-left:auto"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M7 1.5A3 3 0 0 0 4 4.5v3.5L2.5 9.5h9L10 8V4.5A3 3 0 0 0 7 1.5z"/><path d="M5.5 11a1.5 1.5 0 0 0 3 0"/></svg>${unrd>0?'<div class="nb-dot"></div>':''}</div>
+  <div onclick="nav('profile')" style="cursor:pointer">${av(CU,28)}</div>`;
+}
+
+function renderDashboard(){
+  const today=TSTR(),h=new Date().getHours();
+  const gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const myBkC=S.bookings.filter(b=>b.customer_user_id===CU.id);
+  const todC=myBkC.filter(b=>b.booking_date===today);
+  const upcoming=myBkC.filter(b=>b.booking_date>=today);
+  const provBk=S.bookings.filter(b=>b.service_id===2);
+  const todP=provBk.filter(b=>b.booking_date===today);
+  const unrd=S.notifs.filter(n=>!n.is_read).length;
+  return`<div class="page">
+  <div class="ph"><div><h1>${gr}, ${CU.display_name.split(' ')[0]} 👋</h1><p>${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</p></div><button class="btn-p" onclick="S.editBk=null;S.prefDate=null;S.bkModal=true;render()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5.5 1v9M1 5.5h9"/></svg> New Booking</button></div>
+  <div class="g4" style="margin-bottom:14px">
+    <div class="mc" style="border-top-color:#2563eb"><div class="mc-lbl">Linked Services</div><div class="mc-val" style="color:#2563eb">${LINKS.length}</div><div class="mc-sub">Active</div></div>
+    <div class="mc" style="border-top-color:#059669"><div class="mc-lbl">Upcoming</div><div class="mc-val" style="color:#059669">${upcoming.length}</div><div class="mc-sub">Next 7 days</div></div>
+    <div class="mc" style="border-top-color:#d97706"><div class="mc-lbl">Today (Salon)</div><div class="mc-val" style="color:#d97706">${todP.length}</div><div class="mc-sub">Appointments</div></div>
+    <div class="mc" style="border-top-color:#ef4444"><div class="mc-lbl">Unread</div><div class="mc-val" style="color:#ef4444">${unrd}</div><div class="mc-sub">Notifications</div></div>
+  </div>
+  <div class="g2" style="margin-bottom:14px">
+    <div class="card">
+      ${sh('My appointments today','<span style="font-size:11px;color:var(--color-text-tertiary)">${todC.length} appts</span>')}
+      ${todC.length===0?'<div class="empty"><div class="empty-ic">📅</div><div style="font-size:12px;color:var(--color-text-secondary)">No appointments today</div></div>':
+        todC.map(b=>`<div class="bk-row" onclick="S.drawerBk=S.bookings.find(x=>x.id===${b.id});render()" style="cursor:pointer;border-left:2px solid ${b.service?.color||'#2563eb'};padding-left:8px;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:9px;margin-bottom:2px">
+          <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500">${b.service?.name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${fT(b.start_time)}${b.end_time?` – ${fT(b.end_time)}`:''} · ${b.staff_name}</div></div>
+          ${bdg(b.status)}
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      ${sh("Today's salon schedule",`<button class="btn-s" onclick="nav('provider-dashboard')">View all</button>`)}
+      ${todP.length===0?'<div class="empty"><div class="empty-ic">💈</div><div style="font-size:12px;color:var(--color-text-secondary)">No salon bookings today</div></div>':
+        todP.slice(0,4).map(b=>`<div class="bk-row" onclick="S.drawerBk=S.bookings.find(x=>x.id===${b.id});render()" style="cursor:pointer">
+          ${av(b.customer_user||{handle:'wk',display_name:b.customer_name},26)}
+          <div style="flex:1;min-width:0;margin-left:8px"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.customer_name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${fT(b.start_time)} · ${b.staff_name}</div></div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:500">${INR(b.amount)}</div>${bdg(b.status)}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    ${sh('My linked services',`<button class="btn-s" onclick="nav('my-services')">See all</button>`)}
+    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px" class="sh">
+      ${LINKS.map(l=>`<div style="min-width:140px;cursor:pointer" onclick="nav('service-detail',{linkId:${l.id}})">
+        <div class="card-sm" style="overflow:hidden">${svcCover(l.service,70)}<div style="font-size:12px;font-weight:500;margin-bottom:2px">${l.service.name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${l.service.category.name}</div></div>
+      </div>`).join('')}
+      <div style="min-width:110px;cursor:pointer;flex-shrink:0" onclick="nav('explore')">
+        <div style="height:100%;min-height:100px;border:1.5px dashed var(--color-border-tertiary);border-radius:var(--r8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--color-text-tertiary);font-size:11px;padding:10px">
+          <span style="font-size:20px">🧭</span>Explore more
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    ${sh('Latest updates',`<button class="btn-s" onclick="nav('latest')">See all</button>`)}
+    ${S.notifs.slice(0,3).map(n=>`<div style="display:flex;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);align-items:flex-start">
+      <div style="width:6px;height:6px;border-radius:50%;background:${n.is_read?'var(--color-border-secondary)':'#2563eb'};margin-top:4px;flex-shrink:0"></div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:${n.is_read?400:500};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.title}</div><div style="font-size:10px;color:var(--color-text-tertiary);margin-top:1px">${rT(n.created_at)}</div></div>
+    </div>`).join('')}
+  </div>
+  </div>`;
+}
+
+function renderMyServices(){
+  return`<div class="page">
+  <div class="ph"><div><h1>My Services</h1><p>${LINKS.length} linked services</p></div><button class="btn-p" onclick="nav('explore')">🧭 Explore More</button></div>
+  <div class="card" style="overflow:hidden;padding:0">
+    ${LINKS.map((l,idx)=>{
+      const myBk=S.bookings.filter(b=>b.service_id===l.service_id&&b.customer_user_id===CU.id);
+      return`<div style="display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:${idx<LINKS.length-1?'0.5px solid var(--color-border-tertiary)':'none'};cursor:pointer" onclick="nav('service-detail',{linkId:${l.id}})" onmouseover="this.style.background='var(--color-background-secondary)'" onmouseout="this.style.background='transparent'">
+        <div style="width:44px;height:44px;border-radius:var(--r8);background:linear-gradient(135deg,${l.service.color}cc,${l.service.color}77);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${l.service.category.icon}</div>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;margin-bottom:2px">${l.service.name}</div><div style="font-size:11px;color:var(--color-text-tertiary)">${l.service.category.name} · ${l.service.location}</div></div>
+        <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:500;background:var(--color-background-secondary);padding:2px 8px;border-radius:var(--rfull);color:var(--color-text-secondary)">${myBk.length} bookings</div><div style="font-size:10px;color:var(--color-text-tertiary);margin-top:3px">${INR(l.service.base_price)}/visit</div></div>
+      </div>`;
+    }).join('')}
+  </div>
+  </div>`;
+}
+
+function renderServiceDetail(){
+  const linkId=S.pp.linkId||1;
+  const link=LINKS.find(l=>l.id===linkId)||LINKS[0];
+  const svc=link.service;
+  const myBk=S.bookings.filter(b=>b.service_id===svc.id&&b.customer_user_id===CU.id).sort((a,b)=>b.booking_date.localeCompare(a.booking_date));
+  const svcOff=INIT_OFF.filter(o=>o.service_id===svc.id&&o.is_active);
+  return`<div class="page">
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:16px;cursor:pointer;color:var(--color-text-tertiary);font-size:12px" onclick="nav('my-services')">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 10L4 6l4-4"/></svg> Back to My Services
+  </div>
+  <div class="g2" style="align-items:start">
+    <div>
+      <div class="card" style="overflow:hidden;padding:0;margin-bottom:12px">
+        ${svcCover(svc,120)}
+        <div style="padding:14px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px">
+            <div><div style="font-size:16px;font-weight:500">${svc.name}</div><div style="font-size:11px;color:var(--color-text-tertiary);margin-top:2px">${svc.category.name}</div></div>
+            <span style="background:${svc.color}18;color:${svc.color};font-size:10px;font-weight:500;padding:3px 9px;border-radius:var(--rfull)">${svc.category.icon} ${svc.category.name}</span>
+          </div>
+          <p style="font-size:12px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:12px">${svc.description}</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+            ${[['📍',svc.location],['💰',INR(svc.base_price)],['⏱',svc.duration_minutes+' min'],['👤',svc.owner.display_name]].map(([e,v])=>`<div style="background:var(--color-background-secondary);border-radius:var(--r8);padding:8px;text-align:center"><div style="font-size:14px;margin-bottom:2px">${e}</div><div style="font-size:11px;font-weight:500">${v}</div></div>`).join('')}
+          </div>
+          ${avInfo(svc.owner,28)}
+        </div>
+      </div>
+      ${svcOff.length?`<div class="card"><div style="font-size:13px;font-weight:500;margin-bottom:12px">Active offers</div>${svcOff.map(o=>`<div class="ofr" style="margin-bottom:8px">${o.valid_until?`<div style="font-size:10px;color:#0C447C;font-weight:500;margin-bottom:4px">Until ${fD(o.valid_until)}</div>`:''}<div style="font-size:12px;font-weight:500;margin-bottom:3px">${o.title}</div><div style="font-size:11px;color:var(--color-text-secondary)">${o.body}</div></div>`).join('')}</div>`:''}
+    </div>
+    <div class="card">
+      ${sh('My bookings',`<span style="font-size:11px;color:var(--color-text-tertiary)">${myBk.length} total</span>`)}
+      ${myBk.length===0?'<div class="empty"><div class="empty-ic">📋</div><div style="font-size:12px;color:var(--color-text-secondary)">No bookings yet</div></div>':
+        myBk.map(b=>{const d=new Date(b.booking_date+'T00:00:00');return`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer" onclick="S.drawerBk=S.bookings.find(x=>x.id===${b.id});render()">
+          <div style="width:36px;text-align:center;flex-shrink:0"><div style="font-size:16px;font-weight:500;line-height:1">${d.getDate()}</div><div style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase">${d.toLocaleDateString('en',{month:'short'})}</div></div>
+          <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500">${b.staff_name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${fT(b.start_time)}${b.end_time?` – ${fT(b.end_time)}`:''}</div></div>
+          <div style="text-align:right;flex-shrink:0">${bdg(b.status)}<div style="font-size:11px;font-weight:500;margin-top:3px">${INR(b.amount)}</div></div>
+        </div>`;}).join('')}
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderCalendar(){
+  const {calY:y,calM:m,calSel:sel}=S;
+  const myBk=S.bookings.filter(b=>b.customer_user_id===CU.id);
+  const dotMap={};myBk.forEach(b=>{if(!dotMap[b.booking_date])dotMap[b.booking_date]=[];const c=b.service?.color||'#2563eb';if(!dotMap[b.booking_date].includes(c))dotMap[b.booking_date].push(c)});
+  const today=TSTR(),cells=calCells(y,m);
+  const selBk=myBk.filter(b=>b.booking_date===sel).sort((a,b)=>a.start_time.localeCompare(b.start_time));
+  return`<div class="page">
+  <div class="ph"><div><h1>My Calendar</h1><p>All bookings across linked services</p></div></div>
+  <div class="g2" style="align-items:start">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:500">${MONTHS[m-1]} ${y}</div>
+        <div style="display:flex;gap:4px">
+          <button class="btn-s" style="padding:4px 8px" onclick="const nm=S.calM-1||12,ny=nm===12?S.calY-1:S.calY;S.calM=nm;S.calY=ny;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 10L4 6l4-4"/></svg></button>
+          <button class="btn-s" style="padding:4px 8px" onclick="const nm=S.calM%12+1,ny=nm===1?S.calY+1:S.calY;S.calM=nm;S.calY=ny;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10l4-4-4-4"/></svg></button>
+        </div>
+      </div>
+      <div class="cal-grid" style="margin-bottom:2px">${DAYS.map(d=>`<div class="cdh">${d}</div>`).join('')}</div>
+      <div class="cal-grid">${cells.map(c=>{if(!c.cur)return`<div class="cc om">${c.d}</div>`;const k=dKey(y,m,c.d),dots=dotMap[k]||[],iT=k===today,iS=k===sel;return`<div class="cc${iT?' tod':''}${iS&&!iT?' sel':''}" onclick="S.calSel='${k}';render()">${c.d}${dots.length?`<div class="cdots">${dots.slice(0,3).map(dc=>`<div class="cdot" style="background:${iT?'rgba(255,255,255,.8)':dc}"></div>`).join('')}</div>`:''}</div>`;}).join('')}</div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;border-top:0.5px solid var(--color-border-tertiary);padding-top:10px">
+        ${[...new Set(myBk.map(b=>b.service_id))].map(sid=>{const s=SVCS.find(x=>x.id===sid);if(!s)return'';return`<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--color-text-secondary)"><div style="width:7px;height:7px;border-radius:50%;background:${s.color}"></div>${s.name}</div>`;}).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div><div style="font-size:13px;font-weight:500">${new Date(sel+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</div><div style="font-size:10px;color:var(--color-text-tertiary);margin-top:1px">${selBk.length} booking${selBk.length!==1?'s':''}</div></div>
+      </div>
+      ${selBk.length===0?`<div class="empty"><div class="empty-ic">📅</div><div style="font-size:12px;color:var(--color-text-secondary)">No bookings this day</div></div>`:
+        selBk.map(b=>`<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--r8);padding:10px 12px;border-left:2px solid ${b.service?.color||'#2563eb'};margin-bottom:8px;cursor:pointer" onclick="S.drawerBk=S.bookings.find(x=>x.id===${b.id});render()">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><div style="font-size:12px;font-weight:500">${b.service?.name}</div><div style="font-size:10px;color:var(--color-text-tertiary);margin-top:2px">⏰ ${fT(b.start_time)}${b.end_time?` – ${fT(b.end_time)}`:''} · ${b.staff_name}</div></div>
+            <div style="text-align:right">${bdg(b.status)}<div style="font-size:11px;font-weight:500;margin-top:3px">${INR(b.amount)}</div></div>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderExplore(){
+  const filtered=S.explCat===0?SVCS:SVCS.filter(s=>s.category_id===S.explCat);
+  return`<div class="page">
+  <div class="ph"><div><h1>Explore Services</h1><p>Discover and link to services near you</p></div></div>
+  <div class="chips sh" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px">
+    <div class="chip${S.explCat===0?' on':''}" onclick="S.explCat=0;render()">⚡ All</div>
+    ${CATS.map(c=>`<div class="chip${S.explCat===c.id?' on':''}" onclick="S.explCat=${c.id};render()">${c.icon} ${c.name}</div>`).join('')}
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px">
+    ${filtered.map(svc=>{const isL=S.linkedIds.includes(svc.id),isOwn=svc.owner_user_id===CU.id;
+      return`<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--r12);overflow:hidden;cursor:pointer;transition:transform .15s" onclick="S.drawerSvc=SVCS.find(s=>s.id===${svc.id});render()" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+        <div style="height:90px;background:linear-gradient(135deg,${svc.color}dd,${svc.color}88);display:flex;align-items:center;justify-content:center;position:relative">
+          <span style="font-size:34px;line-height:1">${svc.category.icon}</span>
+          <div style="position:absolute;top:7px;left:7px;background:rgba(255,255,255,.9);border-radius:var(--rfull);padding:2px 7px;font-size:9px;font-weight:500;color:#333">${svc.category.name}</div>
+        </div>
+        <div style="padding:10px 12px">
+          <div style="font-size:13px;font-weight:500;margin-bottom:4px">${svc.name}</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:8px">${av(svc.owner,16)}<span style="font-size:10px;color:var(--color-text-tertiary)">${svc.owner.display_name}</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;border-top:0.5px solid var(--color-border-tertiary);padding-top:8px">
+            <span style="font-size:13px;font-weight:500">${INR(svc.base_price)}</span>
+            ${isOwn?`<span style="font-size:10px;color:#0891b2;font-weight:500">Your service</span>`:
+              isL?`<button class="btn-s" style="font-size:10px;padding:3px 8px;background:#EAF3DE;color:#27500A;border-color:#C0DD97" disabled onclick="event.stopPropagation()">✓ Added</button>`:
+              `<button class="btn-p" style="font-size:10px;padding:3px 10px" onclick="event.stopPropagation();if(!S.linkedIds.includes(${svc.id})){S.linkedIds=[...S.linkedIds,${svc.id}];addN({type:'new_customer_linked',title:'Linked to ${svc.name.replace(/'/g,"\\'")}',body:'You can now see their offers and bookings.',related_service_id:${svc.id}})}render()">+ Add</button>`}
+          </div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>
+  </div>`;
+}
+
+function renderLatest(){
+  const unrd=S.notifs.filter(n=>!n.is_read).length;
+  const NICONS={booking_created:{bg:'#E6F1FB',c:'#0C447C',i:'📅'},status_changed:{bg:'#FAEEDA',c:'#633806',i:'🔄'},offer_posted:{bg:'#EEEDFE',c:'#26215C',i:'🏷️'},new_customer_linked:{bg:'#EAF3DE',c:'#27500A',i:'🔗'}};
+  return`<div class="page">
+  <div class="ph"><div><h1>Latest</h1><p>${unrd} unread notification${unrd!==1?'s':''}</p></div>${unrd>0?`<button class="btn-s" onclick="S.notifs=S.notifs.map(n=>({...n,is_read:true}));render()">Mark all read</button>`:''}</div>
+  <div class="card" style="overflow:hidden;padding:0">
+    ${S.notifs.length===0?`<div class="empty"><div class="empty-ic">🔔</div><div style="font-size:12px;color:var(--color-text-secondary)">All caught up!</div></div>`:
+      S.notifs.map(n=>{const m=NICONS[n.type]||NICONS.booking_created;return`<div class="ni-item${n.is_read?'':' unrd'}" onclick="S.notifs=S.notifs.map(x=>x.id===${n.id}?{...x,is_read:true}:x);render()">
+        <div class="ni-ic" style="background:${m.bg};color:${m.c}"><span style="font-size:14px">${m.i}</span></div>
+        <div style="flex:1;min-width:0"><div class="ni-title" style="font-size:12px;font-weight:${n.is_read?400:500}">${n.title}</div>${n.body?`<div class="ni-body" style="font-size:11px;color:var(--color-text-secondary);margin-top:2px">${n.body}</div>`:''}<div class="ni-time" style="font-size:10px;color:var(--color-text-tertiary);margin-top:3px">${rT(n.created_at)}</div></div>
+        ${!n.is_read?`<div style="width:7px;height:7px;border-radius:50%;background:#2563eb;flex-shrink:0;margin-top:3px"></div>`:''}
+      </div>`;}).join('')}
+  </div>
+  </div>`;
+}
+
+function renderProvDash(){
+  const today=TSTR(),myBk=S.bookings.filter(b=>b.service_id===2),todBk=myBk.filter(b=>b.booking_date===today);
+  const rev=myBk.filter(b=>['confirmed','completed'].includes(b.status)).reduce((s,b)=>s+Number(b.amount),0);
+  const custIds=[...new Set(myBk.map(b=>b.customer_user_id).filter(Boolean))];
+  const myOff=S.offers.filter(o=>o.service_id===2&&o.is_active);
+  return`<div class="page">
+  <div class="ph"><div><h1>Rahul's Salon <span style="font-size:12px;font-weight:400;color:var(--color-text-tertiary);margin-left:6px">Provider</span></h1><p>Salon & Grooming · Pune, Koregaon Park</p></div><button class="btn-p" onclick="S.editBk=null;S.prefDate=null;S.bkModal=true;render()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5.5 1v9M1 5.5h9"/></svg> New Booking</button></div>
+  <div class="g4" style="margin-bottom:14px">
+    <div class="mc" style="border-top-color:#2563eb"><div class="mc-lbl">Today</div><div class="mc-val" style="color:#2563eb">${todBk.length}</div><div class="mc-sub">Bookings</div></div>
+    <div class="mc" style="border-top-color:#059669"><div class="mc-lbl">This month</div><div class="mc-val" style="color:#059669">${myBk.length}</div><div class="mc-sub">Total</div></div>
+    <div class="mc" style="border-top-color:#d97706"><div class="mc-lbl">Revenue</div><div class="mc-val" style="color:#d97706">${INR(rev)}</div><div class="mc-sub">Confirmed</div></div>
+    <div class="mc" style="border-top-color:#7c3aed"><div class="mc-lbl">Customers</div><div class="mc-val" style="color:#7c3aed">${custIds.length}</div><div class="mc-sub">Linked</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      ${sh("Today's schedule",`<span style="font-size:11px;color:var(--color-text-tertiary)">${todBk.length} appts</span>`)}
+      ${todBk.length===0?`<div class="empty"><div class="empty-ic">📅</div><div style="font-size:12px;color:var(--color-text-secondary)">No bookings today</div></div>`:
+        todBk.map(b=>`<div class="bk-row" onclick="S.drawerBk=S.bookings.find(x=>x.id===${b.id});render()" style="cursor:pointer">
+          ${av(b.customer_user||{handle:'wk',display_name:b.customer_name},26)}
+          <div style="flex:1;min-width:0;margin-left:8px"><div style="font-size:12px;font-weight:500">${b.customer_name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${fT(b.start_time)}${b.end_time?`–${fT(b.end_time)}`:''} · ${b.staff_name}</div></div>
+          <div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:500">${INR(b.amount)}</div>${bdg(b.status)}</div>
+        </div>`).join('')}
+    </div>
+    <div class="card">
+      ${sh('Active offers',`<button class="btn-s" onclick="nav('offers')">Manage</button>`)}
+      ${myOff.slice(0,2).map(o=>`<div class="ofr" style="margin-bottom:8px">${o.valid_until?`<div style="font-size:10px;color:#0C447C;font-weight:500;margin-bottom:3px">Until ${fD(o.valid_until)}</div>`:''}<div style="font-size:12px;font-weight:500;margin-bottom:2px">${o.title}</div><div style="font-size:11px;color:var(--color-text-secondary);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${o.body}</div></div>`).join('')}
+      <button class="btn-s" style="width:100%;justify-content:center;margin-top:6px" onclick="S.offerModal=true;render()">+ Post new offer</button>
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderManageBk(){
+  const myBk=S.bookings.filter(b=>b.service_id===2);
+  const filt=myBk.filter(b=>{const q=S.bkSearch.toLowerCase();return(!q||b.customer_name.toLowerCase().includes(q)||(b.customer_handle||'').includes(q))&&(S.bkFilter==='all'||b.status===S.bkFilter)}).sort((a,b)=>b.booking_date.localeCompare(a.booking_date)||a.start_time.localeCompare(b.start_time));
+  return`<div class="page">
+  <div class="ph"><div><h1>Manage Bookings</h1><p>${filt.length} of ${myBk.length} bookings</p></div><button class="btn-p" onclick="S.editBk=null;S.prefDate=null;S.bkModal=true;render()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5.5 1v9M1 5.5h9"/></svg> New Booking</button></div>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <input class="inp" style="flex:1" placeholder="Search customers…" value="${S.bkSearch}" oninput="S.bkSearch=this.value;render()">
+    <select class="sel" style="width:auto;min-width:130px" onchange="S.bkFilter=this.value;render()">
+      <option value="all">All statuses</option>
+      ${['confirmed','pending','cancelled','completed','no_show'].map(s=>`<option value="${s}" ${S.bkFilter===s?'selected':''}>${s.replace('_',' ')}</option>`).join('')}
+    </select>
+  </div>
+  <div style="overflow-x:auto;border:0.5px solid var(--color-border-tertiary);border-radius:var(--r12)">
+    <table>
+      <thead><tr><th>Customer</th><th>Date & Time</th><th>Staff</th><th>Amount</th><th>Status</th></tr></thead>
+      <tbody>
+        ${filt.length===0?`<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--color-text-tertiary)">No bookings found</td></tr>`:''}
+        ${filt.map(b=>`<tr onclick="S.drawerBk=S.bookings.find(x=>x.id===${b.id});render()" style="cursor:pointer">
+          <td><div style="display:flex;align-items:center;gap:8px">${av(b.customer_user||{handle:'wk',display_name:b.customer_name},26)}<div><div style="font-weight:500">${b.customer_name}</div><div style="font-size:10px;color:var(--color-text-tertiary);font-family:monospace">@${b.customer_handle||'walk-in'}</div></div></div></td>
+          <td><div>${fD(b.booking_date)}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${fT(b.start_time)}${b.end_time?` – ${fT(b.end_time)}`:''}</div></td>
+          <td style="color:var(--color-text-secondary)">${b.staff_name}</td>
+          <td><span style="font-weight:500">${INR(b.amount)}</span></td>
+          <td>${bdg(b.status)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+  </div>`;
+}
+
+function renderCustomers(){
+  const myBk=S.bookings.filter(b=>b.service_id===2);
+  const custIds=[...new Set(myBk.map(b=>b.customer_user_id).filter(Boolean))];
+  const custs=custIds.map(id=>{const user=USERS.find(u=>u.id===id);const cb=myBk.filter(b=>b.customer_user_id===id);const rev=cb.filter(b=>['confirmed','completed'].includes(b.status)).reduce((s,b)=>s+Number(b.amount),0);return{user,count:cb.length,revenue:rev,lastBk:cb.sort((a,b)=>b.booking_date.localeCompare(a.booking_date))[0]}}).filter(c=>c.user);
+  return`<div class="page">
+  <div class="ph"><div><h1>Customers</h1><p>${custs.length} linked customers</p></div></div>
+  <div class="card" style="overflow:hidden;padding:0">
+    ${custs.length===0?`<div class="empty"><div class="empty-ic">👥</div><div style="font-size:12px;color:var(--color-text-secondary)">No customers yet</div></div>`:''}
+    ${custs.map((c,idx)=>`<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:${idx<custs.length-1?'0.5px solid var(--color-border-tertiary)':'none'};cursor:pointer;transition:background .1s" onclick="S.drawerCust={user:USERS.find(u=>u.id===${c.user.id}),count:${c.count},revenue:${c.revenue}};render()" onmouseover="this.style.background='var(--color-background-secondary)'" onmouseout="this.style.background='transparent'">
+      ${avInfo(c.user,32)}
+      <div style="display:flex;gap:16px;margin-left:auto;text-align:right;flex-shrink:0">
+        <div><div style="font-size:13px;font-weight:500">${c.count}</div><div style="font-size:10px;color:var(--color-text-tertiary)">bookings</div></div>
+        <div><div style="font-size:13px;font-weight:500">${INR(c.revenue)}</div><div style="font-size:10px;color:var(--color-text-tertiary)">revenue</div></div>
+        <div><div style="font-size:12px;color:var(--color-text-secondary)">${fD(c.lastBk?.booking_date)||'—'}</div><div style="font-size:10px;color:var(--color-text-tertiary)">last visit</div></div>
+      </div>
+    </div>`).join('')}
+  </div>
+  </div>`;
+}
+
+function renderProvCal(){
+  const {calY:y,calM:m,calSel:sel}=S;
+  const myBk=S.bookings.filter(b=>b.service_id===2);
+  const dotMap={};myBk.forEach(b=>{if(!dotMap[b.booking_date])dotMap[b.booking_date]=[];const c=sC(b.status);if(!dotMap[b.booking_date].includes(c))dotMap[b.booking_date].push(c)});
+  const today=TSTR(),cells=calCells(y,m);
+  const selBk=myBk.filter(b=>b.booking_date===sel).sort((a,b)=>a.start_time.localeCompare(b.start_time));
+  return`<div class="page">
+  <div class="ph"><div><h1>Provider Calendar</h1><p>Rahul's Salon schedule</p></div><button class="btn-p" onclick="S.editBk=null;S.prefDate=S.calSel;S.bkModal=true;render()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5.5 1v9M1 5.5h9"/></svg> New Booking</button></div>
+  <div class="g2" style="align-items:start">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:500">${MONTHS[m-1]} ${y}</div>
+        <div style="display:flex;gap:4px">
+          <button class="btn-s" style="padding:4px 8px" onclick="const nm=S.calM-1||12,ny=nm===12?S.calY-1:S.calY;S.calM=nm;S.calY=ny;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 10L4 6l4-4"/></svg></button>
+          <button class="btn-s" style="padding:4px 8px" onclick="const nm=S.calM%12+1,ny=nm===1?S.calY+1:S.calY;S.calM=nm;S.calY=ny;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10l4-4-4-4"/></svg></button>
+        </div>
+      </div>
+      <div class="cal-grid" style="margin-bottom:2px">${DAYS.map(d=>`<div class="cdh">${d}</div>`).join('')}</div>
+      <div class="cal-grid">${cells.map(c=>{if(!c.cur)return`<div class="cc om">${c.d}</div>`;const k=dKey(y,m,c.d),dots=dotMap[k]||[],iT=k===today,iS=k===sel;return`<div class="cc${iT?' tod':''}${iS&&!iT?' sel':''}" onclick="S.calSel='${k}';render()">${c.d}${dots.length?`<div class="cdots">${dots.slice(0,3).map(dc=>`<div class="cdot" style="background:${iT?'rgba(255,255,255,.8)':dc}"></div>`).join('')}</div>`:''}</div>`;}).join('')}</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div><div style="font-size:13px;font-weight:500">${new Date(sel+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})}</div><div style="font-size:10px;color:var(--color-text-tertiary);margin-top:1px">${selBk.length} booking${selBk.length!==1?'s':''}</div></div>
+        <button class="btn-p" style="font-size:11px;padding:5px 10px" onclick="S.editBk=null;S.prefDate=S.calSel;S.bkModal=true;render()">+ Add</button>
+      </div>
+      ${selBk.length===0?`<div class="empty"><div class="empty-ic">📅</div><div style="font-size:12px;color:var(--color-text-secondary)">No bookings · click + Add</div></div>`:
+        selBk.map(b=>`<div style="border:0.5px solid var(--color-border-tertiary);border-radius:var(--r8);padding:10px 12px;border-left:2px solid ${sC(b.status)};margin-bottom:8px;cursor:pointer" onclick="S.drawerBk=S.bookings.find(x=>x.id===${b.id});render()">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">${av(b.customer_user||{handle:'wk',display_name:b.customer_name},24)}<div><div style="font-size:12px;font-weight:500">${b.customer_name}</div><div style="font-size:10px;color:var(--color-text-tertiary)">@${b.customer_handle||'walk-in'}</div></div><div style="margin-left:auto;text-align:right">${bdg(b.status)}<div style="font-size:11px;font-weight:500;margin-top:2px">${INR(b.amount)}</div></div></div>
+          <div style="font-size:10px;color:var(--color-text-tertiary)">⏰ ${fT(b.start_time)}${b.end_time?` – ${fT(b.end_time)}`:''} · ${b.staff_name}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderAnalytics(){
+  const myBk=S.bookings.filter(b=>b.service_id===2);
+  const rev=myBk.filter(b=>['confirmed','completed'].includes(b.status)).reduce((s,b)=>s+Number(b.amount),0);
+  const custIds=[...new Set(myBk.map(b=>b.customer_user_id).filter(Boolean))];
+  const stats={confirmed:0,pending:0,cancelled:0,completed:0,no_show:0};
+  myBk.forEach(b=>{stats[b.status]=(stats[b.status]||0)+1});
+  const dayMap={};myBk.forEach(b=>{dayMap[b.booking_date]=(dayMap[b.booking_date]||0)+1});
+  const dp=Object.entries(dayMap).sort((a,b)=>a[0].localeCompare(b[0]));
+  const maxD=Math.max(...dp.map(d=>d[1]),1);
+  const staffMap={};myBk.forEach(b=>{if(!staffMap[b.staff_name])staffMap[b.staff_name]={c:0,r:0};staffMap[b.staff_name].c++;if(['confirmed','completed'].includes(b.status))staffMap[b.staff_name].r+=Number(b.amount)});
+  const sl=Object.entries(staffMap).sort((a,b)=>b[1].r-a[1].r);
+  const maxR=Math.max(...sl.map(s=>s[1].r),1);
+  const SC2={confirmed:'#059669',pending:'#d97706',cancelled:'#dc2626',completed:'#0891b2',no_show:'#888'};
+  return`<div class="page">
+  <div class="ph"><div><h1>Analytics</h1><p>Rahul's Salon — this month</p></div></div>
+  <div class="g4" style="margin-bottom:14px">
+    <div class="mc" style="border-top-color:#2563eb"><div class="mc-lbl">Total bookings</div><div class="mc-val" style="color:#2563eb">${myBk.length}</div></div>
+    <div class="mc" style="border-top-color:#d97706"><div class="mc-lbl">Revenue</div><div class="mc-val" style="color:#d97706">${INR(rev)}</div></div>
+    <div class="mc" style="border-top-color:#7c3aed"><div class="mc-lbl">Customers</div><div class="mc-val" style="color:#7c3aed">${custIds.length}</div></div>
+    <div class="mc" style="border-top-color:#dc2626"><div class="mc-lbl">Cancellations</div><div class="mc-val" style="color:#dc2626">${stats.cancelled}</div></div>
+  </div>
+  <div class="g2" style="margin-bottom:12px">
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:14px">Daily booking volume</div>
+      <div style="display:flex;align-items:flex-end;gap:3px;height:80px">
+        ${dp.map(([date,count])=>{const pct=(count/maxD)*100,iT=date===TSTR();return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px"><div style="width:100%;border-radius:2px 2px 0 0;background:${iT?'#2563eb':'#B5D4F4'};height:${pct}%;min-height:2px" title="${date}: ${count}"></div><span style="font-size:7px;color:var(--color-text-tertiary);transform:rotate(-40deg);transform-origin:top;white-space:nowrap">${date.slice(5)}</span></div>`;}).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:500;margin-bottom:14px">Status breakdown</div>
+      ${Object.entries(stats).map(([s,count])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-size:11px;color:var(--color-text-secondary);text-transform:capitalize">${s.replace('_',' ')}</span><span style="font-size:11px;font-weight:500;color:${SC2[s]}">${count}</span></div>${prog(count,myBk.length||1,SC2[s])}</div>`).join('')}
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:500;margin-bottom:14px">Staff performance</div>
+    ${sl.map(([name,data])=>`<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div style="width:30px;height:30px;border-radius:var(--r8);background:#EFF4FF;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;flex-shrink:0">${name.split(' ').map(w=>w[0]).join('')}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;margin-bottom:4px">${name}</div>${prog(data.r,maxR)}</div>
+      <div style="text-align:right;flex-shrink:0"><div style="font-size:13px;font-weight:500">${INR(data.r)}</div><div style="font-size:10px;color:var(--color-text-tertiary)">${data.c} appts</div></div>
+    </div>`).join('')}
+  </div>
+  </div>`;
+}
+
+function renderOffers(){
+  const myOff=S.offers.filter(o=>o.service_id===2);
+  return`<div class="page">
+  <div class="ph"><div><h1>Offers & Posts</h1><p>Reach all linked customers instantly</p></div><button class="btn-p" onclick="S.offerModal=true;render()"><svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M5.5 1v9M1 5.5h9"/></svg> Post Offer</button></div>
+  ${myOff.length===0?`<div class="card"><div class="empty"><div class="empty-ic">🏷️</div><div style="font-size:12px;color:var(--color-text-secondary)">No offers yet</div></div></div>`:''}
+  <div style="display:flex;flex-direction:column;gap:10px">
+    ${myOff.map(o=>`<div class="card" style="border-left:2px solid #2563eb">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+        <div style="flex:1">${o.valid_until?`<div style="font-size:10px;color:#0C447C;font-weight:500;margin-bottom:4px">Valid until ${fD(o.valid_until)}</div>`:'<div style="font-size:10px;color:#0C447C;font-weight:500;margin-bottom:4px">Always active</div>'}<div style="font-size:14px;font-weight:500;margin-bottom:5px">${o.title}</div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.6">${o.body}</div><div style="font-size:10px;color:var(--color-text-tertiary);margin-top:8px">📣 Notified all linked customers</div></div>
+        <button class="btn-d" style="font-size:11px;padding:5px 10px;flex-shrink:0" onclick="S.offers=S.offers.filter(x=>x.id!==parseInt('${o.id}'));render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M2 3h8M4 3V2h4v1M4.5 3v6M7.5 3v6M2.5 3l.5 7h6l.5-7"/></svg></button>
+      </div>
+    </div>`).join('')}
+  </div>
+  </div>`;
+}
+
+function renderOnboard(){
+  return`<div class="page" style="max-width:520px;margin:0 auto">
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="width:52px;height:52px;background:#EFF4FF;border-radius:var(--r12);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px">🚀</div>
+    <h1 style="font-size:18px;font-weight:500;margin-bottom:4px">Onboard your service</h1>
+    <p style="font-size:12px;color:var(--color-text-tertiary)">Start managing bookings and reaching customers</p>
+  </div>
+  <div class="card">
+    <div class="ff"><label class="fl">Service name</label><input class="inp" id="ob-name" placeholder="e.g. Priya Photography Studio"></div>
+    <div class="g2">
+      <div class="ff"><label class="fl">Category</label><select class="sel" id="ob-cat">${CATS.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}</select></div>
+      <div class="ff"><label class="fl">Location</label><input class="inp" id="ob-loc" placeholder="City, Area"></div>
+    </div>
+    <div class="ff"><label class="fl">Description</label><textarea class="ta" id="ob-desc" placeholder="Tell customers what you offer…"></textarea></div>
+    <div class="g2">
+      <div class="ff"><label class="fl">Base price (₹)</label><input class="inp" type="number" id="ob-price" placeholder="1500"></div>
+      <div class="ff"><label class="fl">Duration (min)</label><input class="inp" type="number" id="ob-dur" placeholder="60"></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn-s" style="flex:1;justify-content:center" onclick="nav('dashboard')">Cancel</button>
+      <button class="btn-p" style="flex:1;justify-content:center" onclick="alert('Service onboarded! Redirecting to provider dashboard…');nav('provider-dashboard')">Onboard Service 🚀</button>
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderProfile(){
+  const myBkC=S.bookings.filter(b=>b.customer_user_id===CU.id);
+  const myBkP=S.bookings.filter(b=>b.service_id===2);
+  const mySvc=SVCS[1];
+  const c=aC(CU.handle),i=ini(CU.display_name);
+  return`<div class="page" style="max-width:480px;margin:0 auto">
+  <div class="card" style="overflow:hidden;padding:0;margin-bottom:12px">
+    <div style="height:70px;background:#2563eb"></div>
+    <div style="padding:0 18px 18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:-24px;margin-bottom:14px">
+        <div class="av" style="width:50px;height:50px;background:${c}22;border:2.5px solid ${c};color:${c};font-size:18px">${i}</div>
+        <button class="btn-s" style="font-size:11px;padding:5px 10px">Edit profile</button>
+      </div>
+      <div style="font-size:17px;font-weight:500">${CU.display_name}</div>
+      <div style="font-size:12px;color:var(--color-text-tertiary);font-family:monospace;margin-top:2px">@${CU.handle}</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">${CU.email}</div>
+    </div>
+  </div>
+  <div class="g2" style="margin-bottom:12px">
+    <div class="mc" style="border-top-color:#2563eb;text-align:center"><div style="font-size:24px;font-weight:500;color:#2563eb">${LINKS.length}</div><div style="font-size:11px;color:var(--color-text-tertiary);margin-top:3px">Linked Services</div></div>
+    <div class="mc" style="border-top-color:#059669;text-align:center"><div style="font-size:24px;font-weight:500;color:#059669">${myBkC.length}</div><div style="font-size:11px;color:var(--color-text-tertiary);margin-top:3px">My Bookings</div></div>
+  </div>
+  <div class="card" style="background:${mySvc.color}08;border-color:${mySvc.color}30;margin-bottom:12px">
+    <div style="font-size:10px;color:var(--color-text-tertiary);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Service Provider</div>
+    <div style="font-size:15px;font-weight:500">${mySvc.name}</div>
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${mySvc.category.name} · ${mySvc.location}</div>
+    <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:2px">${myBkP.length} bookings this month</div>
+    <button class="btn-s" style="font-size:11px;padding:5px 10px;margin-top:10px" onclick="nav('provider-dashboard')">Go to provider dashboard →</button>
+  </div>
+  <button class="btn-d" style="width:100%;justify-content:center" onclick="S.auth='login';render()">Sign out</button>
+  </div>`;
+}
+
+function renderBkModal(){
+  if(!S.bkModal)return'';
+  const bk=S.editBk;
+  return`<div style="position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-start;justify-content:center;padding:20px;z-index:50;border-radius:var(--border-radius-lg)" onclick="if(event.target===this){S.bkModal=false;S.editBk=null;render()}">
+  <div class="modal-box fade">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:15px;font-weight:500">${bk?'Edit Booking':'New Booking'}</div>
+      <button class="btn-s" style="padding:4px 8px" onclick="S.bkModal=false;S.editBk=null;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 2l8 8M10 2L2 10"/></svg></button>
+    </div>
+    <div style="padding:16px 18px">
+      <div class="ff"><label class="fl">Customer (search or type walk-in name)</label><input class="inp" id="bk-cust" placeholder="@ananya_patel or Ananya Patel" value="${bk?bk.customer_name:''}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="ff"><label class="fl">Date</label><input class="inp" type="date" id="bk-date" value="${bk?bk.booking_date:(S.prefDate||TSTR())}"></div>
+        <div class="ff"><label class="fl">Staff</label><select class="sel" id="bk-staff"><option>Rahul Mehta</option><option>Karan Mehta</option><option>Priya Sharma</option></select></div>
+        <div class="ff"><label class="fl">Start time</label><input class="inp" type="time" id="bk-st" value="${bk?bk.start_time:'10:00'}"></div>
+        <div class="ff"><label class="fl">End time</label><input class="inp" type="time" id="bk-et" value="${bk?bk.end_time:'11:00'}"></div>
+        <div class="ff"><label class="fl">Status</label><select class="sel" id="bk-status">${['confirmed','pending','requested','cancelled','completed','no_show'].map(s=>`<option value="${s}" ${bk&&bk.status===s?'selected':''}>${s.replace('_',' ')}</option>`).join('')}</select></div>
+        <div class="ff"><label class="fl">Amount (₹)</label><input class="inp" type="number" id="bk-amt" value="${bk?bk.amount:800}"></div>
+      </div>
+      <div class="ff"><label class="fl">Notes (optional)</label><textarea class="ta" id="bk-notes" style="min-height:50px" placeholder="Special requests…">${bk?bk.notes:''}</textarea></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+        <button class="btn-s" onclick="S.bkModal=false;S.editBk=null;render()">Cancel</button>
+        <button class="btn-p" onclick="
+          const cust=D.getElementById('bk-cust').value||'Walk-in';
+          const date=D.getElementById('bk-date').value;
+          const staff=D.getElementById('bk-staff').value;
+          const st=D.getElementById('bk-st').value;
+          const et=D.getElementById('bk-et').value;
+          const status=D.getElementById('bk-status').value;
+          const amt=Number(D.getElementById('bk-amt').value)||800;
+          const notes=D.getElementById('bk-notes').value;
+          const matchU=USERS.find(u=>u.display_name.toLowerCase()===cust.toLowerCase()||u.handle===cust.replace('@','').toLowerCase());
+          if(S.editBk){
+            S.bookings=S.bookings.map(b=>b.id===S.editBk.id?{...b,customer_name:cust,customer_handle:matchU?matchU.handle:b.customer_handle,customer_user_id:matchU?matchU.id:b.customer_user_id,staff_name:staff,booking_date:date,start_time:st,end_time:et,status,amount:amt,notes}:b);
+          }else{
+            const newBk={id:++nextId,service_id:2,service:SVCS[1],customer_user_id:matchU?matchU.id:null,customer_user:matchU||null,customer_name:cust,customer_handle:matchU?matchU.handle:'',staff_name:staff,booking_date:date,start_time:st,end_time:et,status,amount:amt,notes};
+            S.bookings=[newBk,...S.bookings];
+            if(matchU)addN({type:'booking_created',title:'New booking at Rahul\\'s Salon',body:'A booking has been created for you on '+date+' at '+st+'.',related_service_id:2});
+          }
+          S.bkModal=false;S.editBk=null;S.prefDate=null;render()
+        ">${bk?'Save changes':'Create booking'}</button>
+      </div>
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderBkDrawer(){
+  if(!S.drawerBk)return'';
+  const b=S.drawerBk,cu=b.customer_user;
+  return`<div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;z-index:40;border-radius:var(--border-radius-lg)" onclick="if(event.target===this){S.drawerBk=null;render()}">
+  <div class="drawer-box slide-in" style="padding:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:15px;font-weight:500">Booking Detail</div>
+      <button class="btn-s" style="padding:4px 8px" onclick="S.drawerBk=null;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 2l8 8M10 2L2 10"/></svg></button>
+    </div>
+    <div style="padding:16px">
+      <div style="background:var(--color-background-secondary);border-radius:var(--r12);padding:14px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          ${av(cu||{handle:'wk',display_name:b.customer_name},38)}
+          <div><div style="font-size:14px;font-weight:500">${b.customer_name}</div>${b.customer_handle?`<div style="font-size:11px;color:var(--color-text-tertiary);font-family:monospace">@${b.customer_handle}</div>`:''}</div>
+        </div>
+        ${bdg(b.status)}
+      </div>
+      ${ir('Service',b.service?.name||'')}${ir('Date',fD(b.booking_date))}${ir('Time',`${fT(b.start_time)}${b.end_time?` – ${fT(b.end_time)}`:''}`)}${ir('Staff',b.staff_name)}${ir('Amount',`<span style="font-weight:500">${INR(b.amount)}</span>`)}
+      ${b.notes?`<div style="background:var(--color-background-secondary);border-radius:var(--r8);padding:10px;margin-top:12px;font-size:11px;color:var(--color-text-secondary);font-style:italic;line-height:1.5">"${b.notes}"</div>`:''}
+      <div style="margin-top:16px">
+        <div style="font-size:11px;color:var(--color-text-tertiary);font-weight:500;margin-bottom:8px">Change status</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${['confirmed','pending','cancelled','completed','no_show'].map(s=>`<span class="bdg ${BCLP[s]}" style="cursor:pointer;padding:4px 10px;border:${b.status===s?'1px solid currentColor':'1px solid transparent'}" onclick="S.bookings=S.bookings.map(x=>x.id===${b.id}?{...x,status:'${s}'}:x);S.drawerBk={...S.drawerBk,status:'${s}'};render()">${s.replace('_',' ')}</span>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button class="btn-s" style="flex:1;justify-content:center" onclick="S.editBk=S.drawerBk;S.drawerBk=null;S.bkModal=true;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M8 2l2 2L4 10H2V8z" strokeLinejoin="round"/></svg> Edit</button>
+        <button class="btn-d" style="flex:1;justify-content:center" onclick="if(confirm('Delete this booking?')){S.bookings=S.bookings.filter(x=>x.id!==${b.id});S.drawerBk=null;render()}"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3"><path d="M2 3h8M4 3V2h4v1M4.5 3v6.5M7.5 3v6.5M2.5 3l.5 7h6l.5-7"/></svg> Delete</button>
+      </div>
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderSvcDrawer(){
+  if(!S.drawerSvc)return'';
+  const svc=S.drawerSvc,isL=S.linkedIds.includes(svc.id),isOwn=svc.owner_user_id===CU.id;
+  const svcOff=INIT_OFF.filter(o=>o.service_id===svc.id&&o.is_active);
+  return`<div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;z-index:40;border-radius:var(--border-radius-lg)" onclick="if(event.target===this){S.drawerSvc=null;render()}">
+  <div class="drawer-box slide-in" style="padding:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:15px;font-weight:500">${svc.name}</div>
+      <button class="btn-s" style="padding:4px 8px" onclick="S.drawerSvc=null;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 2l8 8M10 2L2 10"/></svg></button>
+    </div>
+    <div style="padding:0">
+      <div style="height:120px;background:linear-gradient(135deg,${svc.color}dd,${svc.color}88);display:flex;align-items:center;justify-content:center;font-size:44px;line-height:1">${svc.category?.icon}</div>
+      <div style="padding:16px">
+        ${avInfo(svc.owner,28)}<br>
+        <p style="font-size:12px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:14px">${svc.description}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+          ${[['📍',svc.location||'Online'],['⏱',svc.duration_minutes+' min'],['💰',INR(svc.base_price)+'/visit'],['🏷',svc.category?.name]].map(([e,v])=>`<div style="background:var(--color-background-secondary);border-radius:var(--r8);padding:8px;text-align:center"><div style="font-size:16px;margin-bottom:2px">${e}</div><div style="font-size:11px;font-weight:500">${v}</div></div>`).join('')}
+        </div>
+        ${svcOff.length?svcOff.map(o=>`<div class="ofr" style="margin-bottom:8px"><div style="font-size:12px;font-weight:500;margin-bottom:3px">${o.title}</div><div style="font-size:11px;color:var(--color-text-secondary)">${o.body.slice(0,80)}…</div></div>`).join(''):''}
+        ${isOwn?`<button class="btn-s" style="width:100%;justify-content:center;margin-top:8px" disabled>Your own service</button>`:
+          isL?`<button class="btn-s" style="width:100%;justify-content:center;margin-top:8px;background:#EAF3DE;color:#27500A;border-color:#C0DD97" disabled>✓ Added to My Services</button>`:
+          `<button class="btn-p" style="width:100%;justify-content:center;margin-top:8px" onclick="if(!S.linkedIds.includes(${svc.id})){S.linkedIds=[...S.linkedIds,${svc.id}];addN({type:'new_customer_linked',title:'Linked to ${svc.name.replace(/'/g,"\\'")}',body:'You can now see their offers and bookings in My Services.',related_service_id:${svc.id}})}S.drawerSvc=null;render()">+ Add to My Services</button>`}
+      </div>
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderCustDrawer(){
+  if(!S.drawerCust)return'';
+  const{user,count,revenue}=S.drawerCust;
+  const custBk=S.bookings.filter(b=>b.service_id===2&&b.customer_user_id===user.id).sort((a,b)=>b.booking_date.localeCompare(a.booking_date));
+  const c=aC(user.handle),i=ini(user.display_name);
+  return`<div style="position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;z-index:40;border-radius:var(--border-radius-lg)" onclick="if(event.target===this){S.drawerCust=null;render()}">
+  <div class="drawer-box slide-in" style="padding:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:15px;font-weight:500">Customer Profile</div>
+      <button class="btn-s" style="padding:4px 8px" onclick="S.drawerCust=null;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 2l8 8M10 2L2 10"/></svg></button>
+    </div>
+    <div style="padding:16px">
+      <div style="background:var(--color-background-secondary);border-radius:var(--r12);padding:16px;text-align:center;margin-bottom:16px">
+        <div class="av" style="width:48px;height:48px;background:${c}22;border:2px solid ${c}40;color:${c};font-size:18px;margin:0 auto 10px">${i}</div>
+        <div style="font-size:15px;font-weight:500">${user.display_name}</div>
+        <div style="font-size:12px;color:var(--color-text-tertiary);font-family:monospace">@${user.handle}</div>
+        <div style="display:flex;justify-content:center;gap:20px;margin-top:12px">
+          <div><div style="font-size:20px;font-weight:500">${count}</div><div style="font-size:10px;color:var(--color-text-tertiary)">bookings</div></div>
+          <div style="width:1px;background:var(--color-border-tertiary)"></div>
+          <div><div style="font-size:20px;font-weight:500">${INR(revenue)}</div><div style="font-size:10px;color:var(--color-text-tertiary)">revenue</div></div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:500;margin-bottom:10px">Booking history</div>
+      ${custBk.map(b=>{const d=new Date(b.booking_date+'T00:00:00');return`<div style="display:flex;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary)">
+        <div style="text-align:center;width:34px;flex-shrink:0"><div style="font-size:15px;font-weight:500;line-height:1">${d.getDate()}</div><div style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase">${d.toLocaleDateString('en',{month:'short'})}</div></div>
+        <div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500">${fT(b.start_time)}${b.end_time?`–${fT(b.end_time)}`:''} · ${b.staff_name}</div>${b.notes?`<div style="font-size:10px;color:var(--color-text-tertiary);font-style:italic">"${b.notes}"</div>`:''}</div>
+        <div style="text-align:right;flex-shrink:0">${bdg(b.status)}<div style="font-size:11px;font-weight:500;margin-top:2px">${INR(b.amount)}</div></div>
+      </div>`;}).join('')}
+      <button class="btn-p" style="width:100%;justify-content:center;margin-top:14px" onclick="S.drawerCust=null;S.editBk=null;S.prefDate=null;S.bkModal=true;render()">+ Create Booking</button>
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderOfferModal(){
+  if(!S.offerModal)return'';
+  return`<div style="position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:50;border-radius:var(--border-radius-lg)" onclick="if(event.target===this){S.offerModal=false;render()}">
+  <div class="modal-box fade" style="max-width:380px">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)">
+      <div style="font-size:15px;font-weight:500">Post New Offer</div>
+      <button class="btn-s" style="padding:4px 8px" onclick="S.offerModal=false;render()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M2 2l8 8M10 2L2 10"/></svg></button>
+    </div>
+    <div style="padding:14px 16px">
+      <div class="ff"><label class="fl">Title</label><input class="inp" id="off-title" placeholder="Weekend Flash Sale 🎉"></div>
+      <div class="ff"><label class="fl">Message</label><textarea class="ta" id="off-body" style="min-height:70px" placeholder="Describe your offer…"></textarea></div>
+      <div class="ff"><label class="fl">Valid until (optional)</label><input class="inp" type="date" id="off-valid"></div>
+      <div style="background:#EFF4FF;border-radius:var(--r8);padding:10px 12px;font-size:11px;color:#0C447C;margin-bottom:14px">📣 Sent as notification to all linked customers</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn-s" onclick="S.offerModal=false;render()">Cancel</button>
+        <button class="btn-p" onclick="
+          const t=D.getElementById('off-title').value||'New Offer';
+          const b=D.getElementById('off-body').value||'';
+          const v=D.getElementById('off-valid').value;
+          const o={id:++nextId,service_id:2,title:t,body:b,valid_until:v||null,is_active:true,service:SVCS[1]};
+          S.offers=[o,...S.offers];
+          addN({type:'offer_posted',title:'New offer from Rahul\\'s Salon',body:t,related_service_id:2});
+          S.offerModal=false;render()
+        ">Post Offer 📣</button>
+      </div>
+    </div>
+  </div>
+  </div>`;
+}
+
+function renderApp(){
+  let pageHTML='';
+  switch(S.page){
+    case 'dashboard':         pageHTML=renderDashboard();break;
+    case 'my-services':       pageHTML=renderMyServices();break;
+    case 'service-detail':    pageHTML=renderServiceDetail();break;
+    case 'calendar':          pageHTML=renderCalendar();break;
+    case 'explore':           pageHTML=renderExplore();break;
+    case 'latest':            pageHTML=renderLatest();break;
+    case 'provider-dashboard':pageHTML=renderProvDash();break;
+    case 'manage-bookings':   pageHTML=renderManageBk();break;
+    case 'customers':         pageHTML=renderCustomers();break;
+    case 'provider-calendar': pageHTML=renderProvCal();break;
+    case 'analytics':         pageHTML=renderAnalytics();break;
+    case 'offers':            pageHTML=renderOffers();break;
+    case 'onboard-service':   pageHTML=renderOnboard();break;
+    case 'profile':           pageHTML=renderProfile();break;
+    default:                  pageHTML=renderDashboard();
+  }
+  const overlay=renderBkModal()||renderBkDrawer()||renderSvcDrawer()||renderCustDrawer()||renderOfferModal();
+  R.innerHTML=`<div class="shell" style="position:relative">
+    <div class="sidebar">${renderSidebar()}</div>
+    <div class="main">
+      <div class="topbar">${renderTopbar()}</div>
+      <div class="scroll"><div style="max-width:960px;margin:0 auto;padding:18px 16px 40px">${pageHTML}</div></div>
+    </div>
+    ${overlay}
+  </div>`;
+}
+
+function renderAuth(){
+  if(S.auth==='login'){
+    R.innerHTML=`<div class="auth-wrap">
+      <div class="auth-brand">
+        <div style="width:46px;height:46px;background:rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;margin-bottom:22px;border:1px solid rgba(255,255,255,.2)">B</div>
+        <h2 style="font-size:26px;font-weight:500;color:#fff;letter-spacing:-.5px;line-height:1.2;margin-bottom:12px">Your services,<br>beautifully managed.</h2>
+        <p style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:28px">One account for everything — book services you love, manage bookings for your business.</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${[['📅','Book any service, track every appointment'],['🚀','Onboard your own service — no separate account'],['🔔','Get real-time updates, offers & notifications'],['🔗','Link with unlimited services, all in one place']].map(([i,t])=>`<div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.9);font-size:12px"><div style="width:20px;height:20px;border-radius:5px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">${i}</div>${t}</div>`).join('')}
+        </div>
+      </div>
+      <div class="auth-form">
+        <div style="width:100%;max-width:360px">
+          <h3 style="font-size:22px;font-weight:500;margin-bottom:4px">Welcome back</h3>
+          <p style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:24px">Sign in to your Booknest account</p>
+          <div class="ff"><label class="fl">Email</label><input class="inp" type="email" value="rahul@example.com" placeholder="you@example.com"></div>
+          <div class="ff"><label class="fl">Password</label><input class="inp" type="password" value="Password123!" placeholder="••••••••"></div>
+          <button class="btn-p" style="width:100%;justify-content:center;padding:10px;font-size:13px;margin-top:4px;margin-bottom:18px" onclick="S.auth='app';render()">Sign in →</button>
+          <div style="height:0.5px;background:var(--color-border-tertiary);margin-bottom:16px"></div>
+          <p style="text-align:center;font-size:12px;color:var(--color-text-tertiary)">New here? <span style="color:#2563eb;cursor:pointer;font-weight:500" onclick="S.auth='register';render()">Create account</span></p>
+          <div style="margin-top:20px;padding:12px;background:var(--color-background-secondary);border-radius:var(--r8);border:0.5px solid var(--color-border-tertiary)">
+            <div style="font-size:10px;color:var(--color-text-tertiary);font-weight:500;margin-bottom:5px">DEMO CREDENTIALS</div>
+            <div style="font-size:11px;color:var(--color-text-secondary);font-family:monospace">rahul@example.com · Password123!</div>
+            <div style="font-size:10px;color:var(--color-text-tertiary);margin-top:4px">Rahul is both a provider (Salon owner) and customer</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }else{
+    R.innerHTML=`<div class="auth-wrap">
+      <div class="auth-brand">
+        <div style="width:46px;height:46px;background:rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;margin-bottom:22px">B</div>
+        <h2 style="font-size:26px;font-weight:500;color:#fff;letter-spacing:-.5px;line-height:1.2;margin-bottom:12px">Join Booknest.<br>Be both.</h2>
+        <p style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.7">Whether you run a business or love booking services — one account handles everything.</p>
+      </div>
+      <div class="auth-form">
+        <div style="width:100%;max-width:360px">
+          <h3 style="font-size:22px;font-weight:500;margin-bottom:4px">Create account</h3>
+          <p style="font-size:12px;color:var(--color-text-tertiary);margin-bottom:24px">Join thousands of users on Booknest</p>
+          <div class="ff"><label class="fl">Full name</label><input class="inp" placeholder="Rahul Mehta"></div>
+          <div class="ff"><label class="fl">Handle</label>
+            <div style="display:flex;align-items:center;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--r8);overflow:hidden">
+              <span style="padding:8px 10px;font-size:12px;color:var(--color-text-tertiary);border-right:0.5px solid var(--color-border-tertiary);background:var(--color-background-tertiary);font-family:monospace">@</span>
+              <input style="flex:1;border:none;outline:none;background:transparent;padding:8px 11px;font-size:12px;color:var(--color-text-primary);font-family:inherit" placeholder="rahul_mehta_92">
+            </div>
+            <div style="font-size:10px;color:var(--color-text-tertiary);margin-top:3px">Unique identifier — like GitHub. Cannot be changed later.</div>
+          </div>
+          <div class="ff"><label class="fl">Email</label><input class="inp" type="email" placeholder="rahul@example.com"></div>
+          <div class="ff"><label class="fl">Password</label><input class="inp" type="password" placeholder="At least 8 characters"></div>
+          <button class="btn-p" style="width:100%;justify-content:center;padding:10px;font-size:13px;margin-top:4px;margin-bottom:18px" onclick="S.auth='app';render()">Create account →</button>
+          <div style="height:0.5px;background:var(--color-border-tertiary);margin-bottom:16px"></div>
+          <p style="text-align:center;font-size:12px;color:var(--color-text-tertiary)">Already have an account? <span style="color:#2563eb;cursor:pointer;font-weight:500" onclick="S.auth='login';render()">Sign in</span></p>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+function render(){
+  if(S.auth!=='app'){renderAuth();return}
+  renderApp();
+}
+
+render();
+</script>
